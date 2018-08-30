@@ -13,7 +13,7 @@
     <depends>org.jetbrains.kotlin</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <pathReferenceProvider implementation="net.afpro.idea.lancet.LancetAnnotationReferenceProvider"/>
+        <psi.referenceContributor implementation="net.afpro.idea.lancet.LancetReferenceContributor"/>
     </extensions>
 
     <actions>
