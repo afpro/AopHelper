@@ -13,8 +13,7 @@
     <depends>org.jetbrains.kotlin</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <annotator language="JAVA" implementationClass="net.afpro.idea.lancet.JavaAnnotator"/>
-        <annotator language="kotlin" implementationClass="net.afpro.idea.lancet.KotlinAnnotator"/>
+        <pathReferenceProvider implementation="net.afpro.idea.lancet.LancetAnnotationReferenceProvider"/>
     </extensions>
 
     <actions>
