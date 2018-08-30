@@ -14,6 +14,10 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <psi.referenceContributor implementation="net.afpro.idea.lancet.LancetReferenceContributor"/>
+        <completion.contributor language="JAVA"
+                                implementationClass="net.afpro.idea.lancet.LancetJavaCompletionContributor"/>
+        <completion.contributor language="kotlin"
+                                implementationClass="net.afpro.idea.lancet.LancetKotlinCompletionContributor"/>
     </extensions>
 
     <actions>
