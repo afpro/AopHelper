@@ -1,0 +1,22 @@
+<idea-plugin>
+    <id>net.afpro.idea.lancet</id>
+    <name>Lancet Helper</name>
+    <vendor email="admin@afpro.net" url="https://afpro.net">afpro</vendor>
+
+    <description><![CDATA[
+    Lancet helper.<br>
+    Include type hint in annotation and lancet modified method tag.<br>
+    ]]></description>
+
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.java</depends>
+    <depends>org.jetbrains.kotlin</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <annotator language="JAVA" implementationClass="net.afpro.idea.lancet.JavaAnnotator"/>
+        <annotator language="kotlin" implementationClass="net.afpro.idea.lancet.KotlinAnnotator"/>
+    </extensions>
+
+    <actions>
+    </actions>
+</idea-plugin>
