@@ -28,3 +28,6 @@ out/
 
 # local gradle files
 .gradle/
+
+# sample codes for PsiViewer
+src/main/kotlin/sample
