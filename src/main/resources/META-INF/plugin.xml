@@ -18,6 +18,10 @@
                                 implementationClass="net.afpro.idea.lancet.LancetJavaCompletionContributor"/>
         <completion.contributor language="kotlin"
                                 implementationClass="net.afpro.idea.lancet.LancetKotlinCompletionContributor"/>
+        <runLineMarkerContributor language="JAVA"
+                                  implementationClass="net.afpro.idea.lancet.LancetJavaRunLineMarkerContributor"/>
+        <runLineMarkerContributor language="kotlin"
+                                  implementationClass="net.afpro.idea.lancet.LancetKotlinRunLineMarkerContributor"/>
     </extensions>
 
     <actions>
