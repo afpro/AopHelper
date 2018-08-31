@@ -1,11 +1,11 @@
 <idea-plugin>
-    <id>net.afpro.idea.lancet</id>
-    <name>Lancet Helper</name>
+    <id>net.afpro.idea.aophelper</id>
+    <name>Aop Helper</name>
     <vendor email="admin@afpro.net" url="https://afpro.net">afpro</vendor>
 
     <description><![CDATA[
-    Lancet helper.<br>
-    Include type hint in annotation and lancet modified method tag.<br>
+    Aop helper.<br>
+    Include type hint in aop annotation and aop modified method tag.<br>
     ]]></description>
 
     <depends>com.intellij.modules.lang</depends>
@@ -13,15 +13,13 @@
     <depends>org.jetbrains.kotlin</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <psi.referenceContributor implementation="net.afpro.idea.lancet.LancetReferenceContributor"/>
-        <completion.contributor language="JAVA"
-                                implementationClass="net.afpro.idea.lancet.LancetJavaCompletionContributor"/>
-        <completion.contributor language="kotlin"
-                                implementationClass="net.afpro.idea.lancet.LancetKotlinCompletionContributor"/>
-        <runLineMarkerContributor language="JAVA"
-                                  implementationClass="net.afpro.idea.lancet.LancetJavaRunLineMarkerContributor"/>
-        <runLineMarkerContributor language="kotlin"
-                                  implementationClass="net.afpro.idea.lancet.LancetKotlinRunLineMarkerContributor"/>
+        <!--psi.referenceContributor-->
+        <!--completion.contributor-->
+        <!--codeInsight.lineMarkerProvider-->
+
+        <codeInsight.lineMarkerProvider
+                language="JAVA"
+                implementationClass="net.afpro.idea.aophelper.java.LancetJavaAopSourceLineMarkerProvider"/>
     </extensions>
 
     <actions>
