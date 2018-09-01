@@ -31,3 +31,4 @@ out/
 
 # sample codes for PsiViewer
 src/main/kotlin/sample
+local.properties

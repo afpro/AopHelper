@@ -19,7 +19,7 @@
 
         <codeInsight.lineMarkerProvider
                 language="JAVA"
-                implementationClass="net.afpro.idea.aophelper.java.LancetJavaAopSourceLineMarkerProvider"/>
+                implementationClass="net.afpro.idea.aophelper.java.lancet.LancetJavaAopSourceLineMarkerProvider"/>
     </extensions>
 
     <actions>
