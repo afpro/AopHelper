@@ -20,17 +20,22 @@ class LancetJavaAopSourceLineMarkerProvider : AopSourceLineMarkerProvider<Lancet
             return NOBODY
 
         val targetClass = annotations.findAnnotation("me.ele.lancet.base.annotations.TargetClass")
-        val nameRegex = annotations.findAnnotation("me.ele.lancet.base.annotations.NameRegex")
         val implInterface = annotations.findAnnotation("me.ele.lancet.base.annotations.ImplementedInterface")
-
-        if (sequenceOf(targetClass, nameRegex, implInterface).filterNotNull().count() != 1)
+        if (sequenceOf(targetClass, implInterface).filterNotNull().count() != 1)
             return NOBODY
 
-        val type = MyAopType(true, true)
-        type.targetClass = targetClass
-        type.nameRegex = nameRegex
-        type.implInterface = implInterface
-        return type
+        val nameRegex = annotations.findAnnotation("me.ele.lancet.base.annotations.NameRegex")
+        val insert = annotations.findAnnotation("me.ele.lancet.base.annotations.Insert")
+        if (nameRegex != null && insert != null)
+            return NOBODY
+
+        return MyAopType(true, true,
+                targetClass = targetClass,
+                implInterface = implInterface,
+                nameRegex = nameRegex,
+                insert = insert,
+                proxy = annotations.findAnnotation("me.ele.lancet.base.annotations.Proxy"),
+                tryCatchHandler = annotations.findAnnotation("me.ele.lancet.base.annotations.TryCatchHandler"))
     }
 
     override fun aopAnchor(element: PsiElement, type: MyAopType): PsiElement {
@@ -38,14 +43,34 @@ class LancetJavaAopSourceLineMarkerProvider : AopSourceLineMarkerProvider<Lancet
     }
 
     override fun aopTargets(element: PsiElement, type: MyAopType): Sequence<PsiElement> {
-        return emptySequence()
+        element as PsiMethod
+
+        var result: Sequence<PsiElement> = emptySequence()
+
+        // find type.method sequence
+        when {
+            type.targetClass != null -> {
+            }
+            type.implInterface != null -> {
+            }
+        }
+
+        // filter by name regex
+        if (type.nameRegex != null) {
+            val regex = type.nameRegex.findAttributeValue("value")
+        }
+
+        return result
     }
 
-    class MyAopType(override val hasAop: Boolean, override val isSlow: Boolean) : AopSourceLineMarkerProvider.IAopType {
-        var targetClass: PsiAnnotation? = null
-        var implInterface: PsiAnnotation? = null
-        var nameRegex: PsiAnnotation? = null
-    }
+    class MyAopType(override val hasAop: Boolean, override val isSlow: Boolean,
+                    val targetClass: PsiAnnotation? = null,
+                    val implInterface: PsiAnnotation? = null,
+                    val nameRegex: PsiAnnotation? = null,
+                    val insert: PsiAnnotation? = null,
+                    val proxy: PsiAnnotation? = null,
+                    val tryCatchHandler: PsiAnnotation? = null)
+        : AopSourceLineMarkerProvider.IAopType
 
     companion object {
         val NOBODY = MyAopType(false, false)
