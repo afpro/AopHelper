@@ -1,11 +1,6 @@
 package net.afpro.idea.aophelper.lancet
 
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex
-import com.intellij.psi.search.searches.AnnotatedElementsSearch
 import com.intellij.util.ui.ColorIcon
-import org.jetbrains.kotlin.idea.search.projectScope
 import java.awt.Color
 import javax.swing.Icon
 
@@ -40,10 +35,3 @@ internal fun getMarkIcon(isSource: Boolean, hasTargets: Boolean = false): Icon {
     }
 }
 
-internal object LancetSearch {
-    inline fun search(type: PsiClass,
-                      crossinline onTargetFound: (PsiMethod, List<PsiMethod>) -> Unit,
-                      crossinline onSourceFound: (PsiMethod, List<PsiMethod>) -> Unit) {
-        TODO("finish this after research")
-    }
-}

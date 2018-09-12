@@ -14,7 +14,10 @@ import javax.swing.Icon
  * @param name annotation name
  */
 fun Array<out PsiAnnotation?>.findAnnotation(name: String): PsiAnnotation?
-    = firstOrNull { it?.nameReferenceElement?.reference?.canonicalText == name }
+    = firstOrNull { it.fitName(name) }
+
+fun PsiAnnotation?.fitName(name: String): Boolean
+    = this?.nameReferenceElement?.reference?.canonicalText == name
 
 /**
  * create line marker on element

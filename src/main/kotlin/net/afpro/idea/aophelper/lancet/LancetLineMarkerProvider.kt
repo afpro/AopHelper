@@ -12,21 +12,17 @@ interface LancetLineMarkerProvider : LineMarkerProvider {
     }
 
     override fun collectSlowLineMarkers(elements: MutableList<PsiElement>, result: MutableCollection<LineMarkerInfo<PsiElement>>) {
-        elements.asSequence()
-                .filterIsInstance<PsiClass>()
-                .forEach { type ->
-                    LancetSearch.search(type,
-                            onTargetFound = { method, source ->
-                                method.nameIdentifier
-                                        ?.mark(getMarkIcon(false), source)
-                                        ?.also { result.add(it) }
-                            },
-                            onSourceFound = { method, targets ->
-                                method.nameIdentifier
-                                        ?.mark(getMarkIcon(true, !targets.isEmpty()))
-                                        ?.also { result.add(it) }
-                            })
-                }
+        LancetSearch.search(elements.asSequence().filterIsInstance<PsiClass>(),
+                onTargetFound = { method, source ->
+                    method.nameIdentifier
+                            ?.mark(getMarkIcon(false), source)
+                            ?.also { result.add(it) }
+                },
+                onSourceFound = { method, targets ->
+                    method.nameIdentifier
+                            ?.mark(getMarkIcon(true, !targets.isEmpty()))
+                            ?.also { result.add(it) }
+                })
     }
 }
 

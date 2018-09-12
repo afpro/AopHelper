@@ -12,12 +12,11 @@
     <depends>com.intellij.modules.java</depends>
     <depends>org.jetbrains.kotlin</depends>
 
-    <actions>
-        <group id="AopHelper" text="AopHelper">
-            <add-to-group group-id="ToolsMenu" anchor="last"/>
-            <action class="net.afpro.idea.aophelper.TestAction" id="AopHelper.Test" text="Test"/>
-        </group>
-    </actions>
+    <!--<actions>-->
+        <!--<action class="net.afpro.idea.aophelper.TestAction" id="AopHelper.Test" text="TestAopHelper">-->
+            <!--<add-to-group group-id="ToolsMenu" anchor="last"/>-->
+        <!--</action>-->
+    <!--</actions>-->
 
     <extensions defaultExtensionNs="com.intellij">
         <!--psi.referenceContributor-->
