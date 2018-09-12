@@ -12,6 +12,13 @@
     <depends>com.intellij.modules.java</depends>
     <depends>org.jetbrains.kotlin</depends>
 
+    <actions>
+        <group id="AopHelper" text="AopHelper">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <action class="net.afpro.idea.aophelper.TestAction" id="AopHelper.Test" text="Test"/>
+        </group>
+    </actions>
+
     <extensions defaultExtensionNs="com.intellij">
         <!--psi.referenceContributor-->
         <!--completion.contributor-->
@@ -20,8 +27,9 @@
         <codeInsight.lineMarkerProvider
                 language="JAVA"
                 implementationClass="net.afpro.idea.aophelper.lancet.LancetJavaAopSourceLineMarkerProvider"/>
-    </extensions>
 
-    <actions>
-    </actions>
+        <codeInsight.lineMarkerProvider
+                language="kotlin"
+                implementationClass="net.afpro.idea.aophelper.lancet.LancetKotlinAopSourceLineMarkerProvider"/>
+    </extensions>
 </idea-plugin>
