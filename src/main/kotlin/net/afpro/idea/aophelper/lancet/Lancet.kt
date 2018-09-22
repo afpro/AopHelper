@@ -1,15 +1,14 @@
 package net.afpro.idea.aophelper.lancet
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.psi.search.searches.DirectClassInheritorsSearch
 import com.intellij.psi.util.PsiUtil
-import com.intellij.util.ui.ColorIcon
 import net.afpro.idea.aophelper.base.*
 import org.jetbrains.kotlin.idea.search.allScope
-import java.awt.Color
 import java.util.*
 import javax.swing.Icon
 import kotlin.coroutines.experimental.buildSequence
@@ -22,9 +21,9 @@ internal const val cnProxy = "me.ele.lancet.base.annotations.Proxy"
 internal const val cnTryCatchHandler = "me.ele.lancet.base.annotations.TryCatchHandler"
 
 internal enum class LancetIcon(val icon: Icon) {
-    InjectPoint(ColorIcon(16, Color(0x33, 0x66, 0x99))),
-    TargetPoint(ColorIcon(16, Color(0x33, 0x66, 0x99))),
-    InvalidInjectPoint(ColorIcon(16, Color(0x33, 0x66, 0x99))),
+    InjectPoint(AllIcons.Graph.ZoomIn),
+    TargetPoint(AllIcons.Graph.ZoomOut),
+    InvalidInjectPoint(AllIcons.General.Error),
 }
 
 internal enum class LancetScope {
@@ -335,7 +334,7 @@ internal data class LancetInfo(
     }
 
     companion object {
-        fun get(method: PsiMethod): LancetInfo? {
+        fun get(method: PsiMethod, check: Boolean = true): LancetInfo? {
             val annotations = method.annotations
             if (annotations.isEmpty()) {
                 return null
@@ -343,7 +342,7 @@ internal data class LancetInfo(
 
             val targetClassInfo = TargetClassInfo.get(annotations)
             val implInterfaceInfo = ImplInterfaceInfo.get(annotations)
-            if ((targetClassInfo != null).asInt + (implInterfaceInfo != null).asInt != 1) {
+            if (check && (targetClassInfo != null).asInt + (implInterfaceInfo != null).asInt != 1) {
                 // must have exactly one of them
                 return null
             }
@@ -351,13 +350,13 @@ internal data class LancetInfo(
             val proxyInfo = ProxyInfo.get(annotations)
             val insertInfo = InsertInfo.get(annotations)
             val hasTryCatchHandler = annotations.findAnnotation(cnTryCatchHandler) != null
-            if ((proxyInfo != null).asInt + (insertInfo != null).asInt + hasTryCatchHandler.asInt != 1) {
+            if (check && (proxyInfo != null).asInt + (insertInfo != null).asInt + hasTryCatchHandler.asInt != 1) {
                 // must have exactly one of them
                 return null
             }
 
             val nameRegexInfo = NameRegexInfo.get(annotations)
-            if (nameRegexInfo != null && proxyInfo == null) {
+            if (check && nameRegexInfo != null && proxyInfo == null) {
                 // NameRegex must be used with Proxy
                 return null
             }

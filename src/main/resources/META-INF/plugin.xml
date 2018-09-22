@@ -13,9 +13,9 @@
     <depends>org.jetbrains.kotlin</depends>
 
     <!--<actions>-->
-        <!--<action class="net.afpro.idea.aophelper.TestAction" id="AopHelper.Test" text="TestAopHelper">-->
-            <!--<add-to-group group-id="ToolsMenu" anchor="last"/>-->
-        <!--</action>-->
+    <!--<action class="net.afpro.idea.aophelper.TestAction" id="AopHelper.Test" text="TestAopHelper">-->
+    <!--<add-to-group group-id="ToolsMenu" anchor="last"/>-->
+    <!--</action>-->
     <!--</actions>-->
 
     <extensions defaultExtensionNs="com.intellij">
@@ -31,5 +31,11 @@
         <codeInsight.lineMarkerProvider
                 language="kotlin"
                 implementationClass="net.afpro.idea.aophelper.lancet.LancetLineMarkerProvider"/>
+        <psi.referenceContributor
+                language="JAVA"
+                implementation="net.afpro.idea.aophelper.lancet.LancetJavaPsiReferenceContributor"/>
+        <psi.referenceContributor
+                language="kotlin"
+                implementation="net.afpro.idea.aophelper.lancet.LancetKotlinPsiReferenceContributor"/>
     </extensions>
 </idea-plugin>
