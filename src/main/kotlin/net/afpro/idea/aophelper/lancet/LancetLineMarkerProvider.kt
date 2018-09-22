@@ -8,11 +8,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.AnnotatedElementsSearch
+import com.intellij.psi.util.PsiUtil
+import net.afpro.idea.aophelper.base.asMethod
 import net.afpro.idea.aophelper.base.findClassByName
 import net.afpro.idea.aophelper.base.mark
-import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.idea.search.allScope
-import org.jetbrains.kotlin.psi.KtFunction
 import kotlin.coroutines.experimental.buildSequence
 
 class LancetLineMarkerProvider : LineMarkerProvider {
@@ -24,23 +24,11 @@ class LancetLineMarkerProvider : LineMarkerProvider {
         val typesMap = HashMap<Project, LancetTypes>()
 
         elements.asSequence()
-                .map {
-                    when(it) {
-                        is PsiMethod -> it
-                        is KtFunction -> {
-                            val wrappers = it.toLightMethods()
-                            if (wrappers.size == 1) {
-                                wrappers[0]
-                            } else {
-                                null
-                            }
-                        }
-                        else -> null
-                    }
-                }
+                .map { it.asMethod() }
                 .filterNotNull()
                 .flatMap {
-                    collectSlowLineMarkers(it, typesMap.getOrPut(it.project) { LancetTypes(it.project) })
+                    val proj = PsiUtil.getProjectInReadAction(it)
+                    collectSlowLineMarkers(it, typesMap.getOrPut(proj) { LancetTypes(proj) })
                 }
                 .filterNotNull()
                 .forEach {
@@ -51,7 +39,7 @@ class LancetLineMarkerProvider : LineMarkerProvider {
     private fun collectSlowLineMarkers(method: PsiMethod, types: LancetTypes): Sequence<LineMarkerInfo<PsiElement>?> = buildSequence {
         val asInjectPoint = types.possibleInjectPoints[method]
         if (asInjectPoint != null) {
-            yield(method.nameIdentifier?.mark(
+            yield(markAnchorOf(method).mark(
                     LancetIcon.InjectPoint.icon,
                     asInjectPoint.findAllTargets()
                             .asSequence()
@@ -66,14 +54,20 @@ class LancetLineMarkerProvider : LineMarkerProvider {
                 .filter { it.match(method) }
                 .toList()
         if (!injectPointsToThis.isEmpty()) {
-            yield(method.nameIdentifier?.mark(
+            yield(markAnchorOf(method).mark(
                     LancetIcon.TargetPoint.icon,
                     injectPointsToThis
                             .asSequence()
-                            .map { it.method.nameIdentifier }
+                            .map { it.injectMethod.nameIdentifier }
                             .filterNotNull()
                             .toList()
             ))
+        }
+    }
+
+    companion object {
+        private fun markAnchorOf(method: PsiMethod): PsiElement {
+            return method.nameIdentifier ?: method
         }
     }
 }
