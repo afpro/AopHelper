@@ -17,7 +17,7 @@ fun Array<out PsiAnnotation?>.findAnnotation(name: String): PsiAnnotation?
     = firstOrNull { it.fitName(name) }
 
 fun PsiAnnotation?.fitName(name: String): Boolean
-    = this?.nameReferenceElement?.reference?.canonicalText == name
+    = this?.qualifiedName == name
 
 /**
  * create line marker on element

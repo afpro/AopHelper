@@ -19,16 +19,17 @@
     <!--</actions>-->
 
     <extensions defaultExtensionNs="com.intellij">
+        <!--stubIndex-->
         <!--psi.referenceContributor-->
         <!--completion.contributor-->
         <!--codeInsight.lineMarkerProvider-->
 
+        <!-- lancet -->
         <codeInsight.lineMarkerProvider
                 language="JAVA"
-                implementationClass="net.afpro.idea.aophelper.lancet.LancetJavaAopSourceLineMarkerProvider"/>
-
+                implementationClass="net.afpro.idea.aophelper.lancet.LancetLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider
                 language="kotlin"
-                implementationClass="net.afpro.idea.aophelper.lancet.LancetKotlinAopSourceLineMarkerProvider"/>
+                implementationClass="net.afpro.idea.aophelper.lancet.LancetLineMarkerProvider"/>
     </extensions>
 </idea-plugin>
