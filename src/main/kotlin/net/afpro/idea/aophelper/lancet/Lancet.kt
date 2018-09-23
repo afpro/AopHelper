@@ -19,6 +19,7 @@ internal const val cnNameRegex = "me.ele.lancet.base.annotations.NameRegex"
 internal const val cnInsert = "me.ele.lancet.base.annotations.Insert"
 internal const val cnProxy = "me.ele.lancet.base.annotations.Proxy"
 internal const val cnTryCatchHandler = "me.ele.lancet.base.annotations.TryCatchHandler"
+internal const val cnClassOf = "me.ele.lancet.base.annotations.ClassOf"
 
 internal enum class LancetIcon(val icon: Icon) {
     InjectPoint(AllIcons.Graph.ZoomIn),
@@ -260,11 +261,28 @@ internal data class LancetInfo(
         val insertInfo: InsertInfo?,
         val nameRegexInfo: NameRegexInfo?,
         val isTryCatchHandler: Boolean) {
+    val retType by lazy(LazyThreadSafetyMode.NONE) {
+        val classOf = injectMethod.annotations.findAnnotation(cnClassOf)
+        classOf?.findAttributeValue("value")?.asText()
+                ?: lancetClassOfName(injectMethod.returnType)
+    }
+
+    val paramTypes by lazy(LazyThreadSafetyMode.NONE) {
+        injectMethod.parameterList.parameters.asSequence()
+                .map {
+                    val classOf = it.annotations.findAnnotation(cnClassOf)
+                    classOf?.findAttributeValue("value")?.asText()
+                            ?: lancetClassOfName(it.type)
+                }
+                .toList()
+    }
+
     /**
      * check if this injectMethod is target of this lancet injection point
      */
     fun match(method: PsiMethod): Boolean {
         return matchMethodName(method)
+                && matchMethodSig(method)
                 && matchClassName(method)
                 && matchNameRegex(method.containingClass)
     }
@@ -278,6 +296,34 @@ internal data class LancetInfo(
         if (insertInfo != null
                 && insertInfo.value != method.name) {
             return false
+        }
+
+        return true
+    }
+
+    fun matchMethodSig(method: PsiMethod): Boolean {
+        val injectModList = method.modifierList
+        val targetModList = method.modifierList
+        mustSameModifiers.forEach {
+            if (injectModList.hasModifierProperty(it) != targetModList.hasModifierProperty(it)) {
+                return false
+            }
+        }
+
+        if (retType != lancetClassOfName(method.returnType)) {
+            return false
+        }
+
+        if (injectMethod.parameterList.parametersCount != method.parameterList.parametersCount) {
+            return false
+        }
+
+        val injectParamTypes = paramTypes
+        val targetParamTypes = method.parameterList.parameters
+        (injectParamTypes zip targetParamTypes).forEach {
+            if (it.first != lancetClassOfName(it.second.type)) {
+                return false
+            }
         }
 
         return true
@@ -318,6 +364,7 @@ internal data class LancetInfo(
                             .filterNotNull()
                 }
                 .filter(this::matchMethodName)
+                .filter(this::matchMethodSig)
     }
 
     private fun possibleTargetClass(): Sequence<PsiClass> = buildSequence {
@@ -334,6 +381,13 @@ internal data class LancetInfo(
     }
 
     companion object {
+        private val mustSameModifiers = arrayOf(
+                PsiModifier.PUBLIC,
+                PsiModifier.PROTECTED,
+                PsiModifier.PRIVATE,
+                PsiModifier.PACKAGE_LOCAL,
+                PsiModifier.STATIC)
+
         fun get(method: PsiMethod, check: Boolean = true): LancetInfo? {
             val annotations = method.annotations
             if (annotations.isEmpty()) {
@@ -369,6 +423,16 @@ internal data class LancetInfo(
                     insertInfo,
                     nameRegexInfo,
                     hasTryCatchHandler)
+        }
+
+        fun lancetClassOfName(type: PsiType?): String {
+            type ?: return ""
+            return when(type) {
+                is PsiPrimitiveType -> type.kind.binaryName
+                is PsiArrayType -> "${lancetClassOfName(type.componentType)}[]"
+                is PsiClassType -> type.resolve()?.signature(useSlash = false) ?: ""
+                else -> type.canonicalText
+            }
         }
     }
 }
