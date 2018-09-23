@@ -54,6 +54,10 @@ internal data class TargetClassInfo(
         val value: String,
         val scope: LancetScope) {
     fun match(type: PsiClass): Boolean {
+        if (type.isInterface) {
+            return false
+        }
+
         if (scope == LancetScope.LEAF && type.hasSubClass()) {
             return false
         }
@@ -117,6 +121,10 @@ internal data class ImplInterfaceInfo(
         val value: Set<String>,
         val scope: LancetScope) {
     fun match(type: PsiClass): Boolean {
+        if (type.isInterface) {
+            return false
+        }
+
         if (scope == LancetScope.LEAF && type.hasSubClass()) {
             return false
         }
