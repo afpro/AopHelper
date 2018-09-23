@@ -365,6 +365,7 @@ internal data class LancetInfo(
      */
     fun findAllTargets(): Sequence<PsiMethod> {
         return possibleTargetClass()
+                .filterNot(PsiClass::isInterface)
                 .filter(this::matchNameRegex)
                 .flatMap {
                     it.children.asSequence()
