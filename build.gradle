@@ -35,6 +35,7 @@ kotlin {
 intellij {
     version '2017.3'
     plugins 'org.jetbrains.kotlin:1.2.71-release-IJ2017.3-1'
+    updateSinceUntilBuild false
 }
 
 patchPluginXml {
