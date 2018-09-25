@@ -4,9 +4,13 @@
     <vendor email="admin@afpro.net" url="https://afpro.net">afpro</vendor>
 
     <description><![CDATA[
-    Aop helper.<br>
-    Include type hint in aop annotation and aop modified method tag.<br>
+    Aop helper.<br/>
+    With modified method tag.<br/>
+
+    Support: Lancet<br/>
     ]]></description>
+
+    <idea-version since-build="173"/>
 
     <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.modules.java</depends>

@@ -1,6 +1,7 @@
 package net.afpro.idea.aophelper.lancet
 
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
@@ -437,7 +438,7 @@ internal data class LancetInfo(
         fun lancetClassOfName(type: PsiType?): String {
             type ?: return ""
             return when(type) {
-                is PsiPrimitiveType -> type.kind.binaryName
+                is PsiPrimitiveType -> type.binaryName()
                 is PsiArrayType -> "${lancetClassOfName(type.componentType)}[]"
                 is PsiClassType -> type.resolve()?.signature(useSlash = false) ?: ""
                 else -> type.canonicalText
