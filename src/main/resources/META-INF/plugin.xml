@@ -10,7 +10,7 @@
     Support: Lancet<br/>
     ]]></description>
 
-    <idea-version since-build="173"/>
+    <idea-version since-build="173" until-build="*"/>
 
     <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.modules.java</depends>
