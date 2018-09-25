@@ -13,6 +13,9 @@ hs_err_pid*
 build/
 out/
 
+# vim tmp file
+.*.swp
+
 # sample codes for PsiViewer
 src/main/kotlin/sample
 local.properties
