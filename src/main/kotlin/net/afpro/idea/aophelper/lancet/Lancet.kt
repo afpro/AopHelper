@@ -1,7 +1,6 @@
 package net.afpro.idea.aophelper.lancet
 
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
@@ -292,8 +291,26 @@ internal data class LancetInfo(
     fun match(method: PsiMethod): Boolean {
         return matchMethodName(method)
                 && matchMethodSig(method)
-                && matchClassName(method)
+                && matchClassName(method.containingClass)
                 && matchNameRegex(method.containingClass)
+    }
+
+    fun match(clazz: PsiClass): Boolean {
+        if (!matchClassName(clazz) || !matchNameRegex(clazz)) {
+            return false
+        }
+
+        val hasMatchedMethod = clazz.children.asSequence()
+                .map { it.asMethod() }
+                .filterNotNull()
+                .filter(this::matchMethodName)
+                .filter(this::matchMethodSig)
+                .any()
+        if (hasMatchedMethod) {
+            return false
+        }
+
+        return hasMethodToOverride(clazz)
     }
 
     fun matchMethodName(method: PsiMethod): Boolean {
@@ -338,14 +355,14 @@ internal data class LancetInfo(
         return true
     }
 
-    fun matchClassName(method: PsiMethod): Boolean {
-        val classType = method.containingClass ?: return false
+    fun matchClassName(type: PsiClass?): Boolean {
+        type ?: return false
 
-        if (targetClassInfo != null && !targetClassInfo.match(classType)) {
+        if (targetClassInfo != null && !targetClassInfo.match(type)) {
             return false
         }
 
-        if (implInterfaceInfo != null && !implInterfaceInfo.match(classType)) {
+        if (implInterfaceInfo != null && !implInterfaceInfo.match(type)) {
             return false
         }
 
@@ -364,17 +381,28 @@ internal data class LancetInfo(
     /**
      * find all targets of this lancet injection point
      */
-    fun findAllTargets(): Sequence<PsiMethod> {
+    fun findAllTargets(): Sequence<PsiElement> {
         return possibleTargetClass()
                 .filterNot(PsiClass::isInterface)
                 .filter(this::matchNameRegex)
                 .flatMap {
-                    it.children.asSequence()
-                            .map(PsiElement::asMethod)
-                            .filterNotNull()
+                    buildSequence {
+                        // declared methods
+                        var foundDeclMethod = false
+                        it.children.asSequence()
+                                .forEach { el ->
+                                    val asMethod = el.asMethod() ?: return@forEach
+                                    if (matchMethodName(asMethod) && matchMethodSig(asMethod)) {
+                                        yield(el)
+                                        foundDeclMethod = true
+                                    }
+                                }
+
+                        if (!foundDeclMethod && hasMethodToOverride(it)) {
+                            yield(it)
+                        }
+                    }
                 }
-                .filter(this::matchMethodName)
-                .filter(this::matchMethodSig)
     }
 
     private fun possibleTargetClass(): Sequence<PsiClass> = buildSequence {
@@ -388,6 +416,21 @@ internal data class LancetInfo(
         if (implInterfaceInfo != null) {
             yieldAll(implInterfaceInfo.possibleTargetClass(proj, scope))
         }
+    }
+
+    private fun hasMethodToOverride(clazz: PsiClass): Boolean {
+        return clazz.chainUp()
+                .flatMap { it.children.asSequence() }
+                .map { it.asMethod() }
+                .filterNotNull()
+                .filter(this::matchMethodName)
+                .filter {
+                    !it.hasModifierProperty(PsiModifier.PRIVATE)
+                            && !it.hasModifierProperty(PsiModifier.STATIC)
+                            && !it.hasModifierProperty(PsiModifier.FINAL)
+                }
+                .filter(this::matchMethodSig)
+                .any()
     }
 
     companion object {
@@ -437,7 +480,7 @@ internal data class LancetInfo(
 
         fun lancetClassOfName(type: PsiType?): String {
             type ?: return ""
-            return when(type) {
+            return when (type) {
                 is PsiPrimitiveType -> type.binaryName()
                 is PsiArrayType -> "${lancetClassOfName(type.componentType)}[]"
                 is PsiClassType -> type.resolve()?.signature(useSlash = false) ?: ""
