@@ -6,13 +6,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.AnnotatedElementsSearch
 import com.intellij.psi.util.PsiUtil
 import net.afpro.idea.aophelper.base.asMethod
 import net.afpro.idea.aophelper.base.findClassByName
 import net.afpro.idea.aophelper.base.mark
+import net.afpro.idea.aophelper.base.tryNameIdentifier
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.psi.KtFunction
 import kotlin.coroutines.experimental.buildSequence
@@ -38,47 +38,31 @@ class LancetLineMarkerProvider : LineMarkerProvider {
                         is PsiClass -> {
                             val matchedInjectPoints = types.possibleInjectPoints.asSequence()
                                     .filter { it.value.match(el) }
-                                    .map { it.key }
+                                    .map { it.key.tryNameIdentifier }
                                     .toList()
                             if (matchedInjectPoints.isEmpty()) {
                                 emptySequence()
                             } else {
-                                sequenceOf(el.mark(LancetIcon.TargetPoint.icon, matchedInjectPoints))
+                                sequenceOf(el.tryNameIdentifier.mark(LancetIcon.TargetPoint.icon, matchedInjectPoints))
                             }
                         }
-                        is PsiMethod -> {
-                            collectSlowLineMarkers(el, types)
-                        }
-                        is KtFunction -> {
+                        else -> {
                             el.asMethod()?.let { collectSlowLineMarkers(it, types) } ?: emptySequence()
                         }
-                        else -> emptySequence()
                     }
                 }
                 .filterNotNull()
                 .forEach { result.add(it) }
-
-        elements.asSequence()
-                .map { it.asMethod() }
-                .filterNotNull()
-                .flatMap {
-                    val proj = PsiUtil.getProjectInReadAction(it)
-                    collectSlowLineMarkers(it, typesMap.getOrPut(proj) { LancetTypes(proj) })
-                }
-                .filterNotNull()
-                .forEach {
-                    result.add(it)
-                }
     }
 
     private fun collectSlowLineMarkers(method: PsiMethod, types: LancetTypes): Sequence<LineMarkerInfo<PsiElement>?> = buildSequence {
         val asInjectPoint = types.possibleInjectPoints[method]
         if (asInjectPoint != null) {
-            yield(markAnchorOf(method).mark(
+            yield(method.tryNameIdentifier.mark(
                     LancetIcon.InjectPoint.icon,
                     asInjectPoint.findAllTargets()
                             .asSequence()
-                            .map { markAnchorOf(it) }
+                            .map { it.tryNameIdentifier }
                             .filterNotNull()
                             .toList()
             ))
@@ -89,11 +73,11 @@ class LancetLineMarkerProvider : LineMarkerProvider {
                 .filter { it.match(method) }
                 .toList()
         if (!injectPointsToThis.isEmpty()) {
-            yield(markAnchorOf(method).mark(
+            yield(method.tryNameIdentifier.mark(
                     LancetIcon.TargetPoint.icon,
                     injectPointsToThis
                             .asSequence()
-                            .map { it.injectMethod.nameIdentifier }
+                            .map { it.injectMethod.tryNameIdentifier }
                             .filterNotNull()
                             .toList()
             ))
@@ -128,18 +112,6 @@ class LancetLineMarkerProvider : LineMarkerProvider {
         private fun methodToInjectPoint(method: PsiMethod): Pair<PsiMethod, LancetInfo>? {
             val lancetInfo = LancetInfo.get(method) ?: return null
             return method to lancetInfo
-        }
-    }
-
-    companion object {
-        private fun markAnchorOf(el: PsiElement): PsiElement {
-            if (el is PsiNameIdentifierOwner) {
-                val identifier = el.nameIdentifier
-                if (identifier != null) {
-                    return identifier
-                }
-            }
-            return el
         }
     }
 }

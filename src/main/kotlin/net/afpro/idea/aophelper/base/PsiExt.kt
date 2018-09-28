@@ -25,6 +25,9 @@ fun Array<out PsiAnnotation?>.findAnnotation(name: String): PsiAnnotation? = fir
 
 fun PsiAnnotation?.fitName(name: String): Boolean = this?.qualifiedName == name
 
+val PsiElement.tryNameIdentifier: PsiElement
+    get() = (this as? PsiNameIdentifierOwner)?.nameIdentifier ?: this
+
 /**
  * create line marker on element
  *
