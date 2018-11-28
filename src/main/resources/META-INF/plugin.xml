@@ -22,6 +22,15 @@
     <!--</action>-->
     <!--</actions>-->
 
+
+    <actions>
+        <!-- Add your actions here -->
+        <action id="LancetListDialogAction" class="net.afpro.idea.aophelper.LancetListDialogAction" text="Lancet List" description="show all lancet class ">
+            <add-to-group group-id="EditMenu" anchor="first"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="meta J" second-keystroke="meta J"/>
+        </action>
+    </actions>
+
     <extensions defaultExtensionNs="com.intellij">
         <!--stubIndex-->
         <!--psi.referenceContributor-->

@@ -34,6 +34,8 @@ internal enum class LancetScope {
     LEAF;
 }
 
+
+
 private fun PsiAnnotationMemberValue?.asLancetScope(): LancetScope {
     val text = this?.text ?: return LancetScope.SELF
     val lastDot = text.lastIndexOf('.')
@@ -46,6 +48,7 @@ private fun PsiAnnotationMemberValue?.asLancetScope(): LancetScope {
 }
 
 private fun PsiAnnotationMemberValue?.asText(): String {
+    //text是指
     val text = this?.text ?: return ""
     return text.substring(1, text.length - 1)
 }
@@ -116,6 +119,7 @@ internal data class TargetClassInfo(
         }
     }
 }
+
 
 internal data class ImplInterfaceInfo(
         val value: Set<String>,
@@ -382,6 +386,7 @@ internal data class LancetInfo(
      * find all targets of this lancet injection point
      */
     fun findAllTargets(): Sequence<PsiElement> {
+
         return possibleTargetClass()
                 .filterNot(PsiClass::isInterface)
                 .filter(this::matchNameRegex)
@@ -488,4 +493,6 @@ internal data class LancetInfo(
             }
         }
     }
+
+
 }

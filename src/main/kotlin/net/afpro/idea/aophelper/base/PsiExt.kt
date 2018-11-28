@@ -7,6 +7,7 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.DirectClassInheritorsSearch
+import net.afpro.idea.aophelper.lancet.Cache
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
@@ -45,9 +46,14 @@ fun PsiElement.mark(icon: Icon, targets: Collection<PsiElement> = emptyList()): 
                 null,
                 GutterIconRenderer.Alignment.LEFT)
     } else {
+        if (!Cache.allMatchPsiElement.contains(this)) {
+            Cache.allMatchPsiElement.add(this)
+        }
         NavigationGutterIconBuilder.create(icon)
                 .setTargets(targets)
                 .createLineMarkerInfo(this)
+
+
     }
 }
 

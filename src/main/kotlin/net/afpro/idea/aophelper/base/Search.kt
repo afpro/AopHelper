@@ -37,5 +37,7 @@ fun findAllClassByName(qName: String, project: Project, scope: GlobalSearchScope
  * @param scope target scope
  * @return all class match name
  */
+
+//就一个？
 fun findClassByName(qName: String, project: Project, scope: GlobalSearchScope): PsiClass? =
         findAllClassByName(qName, project, scope).firstOrNull()

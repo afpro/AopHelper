@@ -14,17 +14,19 @@ import net.afpro.idea.aophelper.base.findClassByName
 import net.afpro.idea.aophelper.base.mark
 import net.afpro.idea.aophelper.base.tryNameIdentifier
 import org.jetbrains.kotlin.idea.search.allScope
-import org.jetbrains.kotlin.psi.KtFunction
+import java.util.logging.Logger
 import kotlin.coroutines.experimental.buildSequence
 
 class LancetLineMarkerProvider : LineMarkerProvider {
+
+
+
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
         return null
     }
 
     override fun collectSlowLineMarkers(elements: MutableList<PsiElement>, result: MutableCollection<LineMarkerInfo<PsiElement>>) {
         val typesMap = HashMap<Project, LancetTypes>()
-
         elements.asSequence()
                 .flatMap { el ->
                     val proj by lazy(LazyThreadSafetyMode.NONE) {
@@ -37,9 +39,14 @@ class LancetLineMarkerProvider : LineMarkerProvider {
                     when (el) {
                         is PsiClass -> {
                             val matchedInjectPoints = types.possibleInjectPoints.asSequence()
-                                    .filter { it.value.match(el) }
+                                    .filter {
+                                        it.value.match(el)
+                                    }
                                     .map { it.key.tryNameIdentifier }
                                     .toList()
+
+
+
                             if (matchedInjectPoints.isEmpty()) {
                                 emptySequence()
                             } else {
@@ -47,15 +54,19 @@ class LancetLineMarkerProvider : LineMarkerProvider {
                             }
                         }
                         else -> {
-                            el.asMethod()?.let { collectSlowLineMarkers(it, types) } ?: emptySequence()
+                            el.asMethod()?.let { collectSlowLineMarkers(it, types) }
+                                    ?: emptySequence()
                         }
                     }
                 }
                 .filterNotNull()
                 .forEach { result.add(it) }
+
+
     }
 
     private fun collectSlowLineMarkers(method: PsiMethod, types: LancetTypes): Sequence<LineMarkerInfo<PsiElement>?> = buildSequence {
+
         val asInjectPoint = types.possibleInjectPoints[method]
         if (asInjectPoint != null) {
             yield(method.tryNameIdentifier.mark(
@@ -84,7 +95,7 @@ class LancetLineMarkerProvider : LineMarkerProvider {
         }
     }
 
-    private data class LancetTypes(
+   internal data class LancetTypes(
             val proj: Project,
             val scope: GlobalSearchScope = proj.allScope(),
             val cTargetClass: PsiClass? = findClassByName(cnTargetClass, proj, scope),
@@ -114,4 +125,6 @@ class LancetLineMarkerProvider : LineMarkerProvider {
             return method to lancetInfo
         }
     }
+
+
 }
