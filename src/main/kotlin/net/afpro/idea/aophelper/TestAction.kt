@@ -20,4 +20,5 @@ class TestAction : AnAction() {
         Notifications.Bus.notify(Notification("AopHelper", "Test", "str: $cStr", NotificationType.INFORMATION))
         Notifications.Bus.notify(Notification("AopHelper", "Test", "seq: $cSeq", NotificationType.INFORMATION))
     }
+
 }

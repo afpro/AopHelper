@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="net.afpro.idea.aophelper.LancetGenerateDialog">
+  <grid id="cbd77" binding="contentPane" layout-manager="GridLayoutManager" row-count="5" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
+    <margin top="10" left="10" bottom="10" right="10"/>
+    <constraints>
+      <xy x="48" y="54" width="100" height="100"/>
+    </constraints>
+    <properties>
+      <minimumSize width="100" height="100"/>
+    </properties>
+    <border type="none" title="Lancent Generate"/>
+    <children>
+      <component id="4b19d" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="name"/>
+        </properties>
+      </component>
+
+      <component id="1ebff" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="value"/>
+        </properties>
+      </component>
+
+      <component id="dd40e" class="javax.swing.JTextArea" binding="targetClassCheckBox">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <enabled value="true"/>
+          <selected value="true"/>
+          <text value="@TargetClass"/>
+          <visible value="true"/>
+        </properties>
+      </component>
+
+      <component id="5fcd2" class="javax.swing.JTextField" binding="targetClassTextField">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="471" height="24"/>
+          </grid>
+        </constraints>
+        <properties>
+          <toolTipText value="Enter @NeedsPermissions method name"/>
+        </properties>
+      </component>
+
+      <component id="5f85a" class="javax.swing.JTextArea" binding="insertCheckBox" default-binding="true">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="@Insert"/>
+        </properties>
+      </component>
+
+      <component id="71625" class="javax.swing.JTextField" binding="insertTextField">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="471" height="24"/>
+          </grid>
+        </constraints>
+        <properties>
+          <focusable value="true"/>
+          <opaque value="true"/>
+        </properties>
+      </component>
+
+      <component id="79939" class="javax.swing.JTextArea" binding="generateCodeTextField">
+        <constraints>
+          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="471" height="184"/>
+          </grid>
+        </constraints>
+        <properties>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>

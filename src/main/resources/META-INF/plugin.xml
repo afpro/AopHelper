@@ -10,7 +10,7 @@
     Support: Lancet<br/>
     ]]></description>
 
-    <idea-version since-build="173"/>
+    <idea-version since-build="173" />
 
     <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.modules.java</depends>
@@ -25,10 +25,22 @@
 
     <actions>
         <!-- Add your actions here -->
-        <action id="LancetListDialogAction" class="net.afpro.idea.aophelper.LancetListDialogAction" text="Lancet List" description="show all lancet class ">
-            <add-to-group group-id="EditMenu" anchor="first"/>
-            <keyboard-shortcut keymap="$default" first-keystroke="meta J" second-keystroke="meta J"/>
+        <action class="net.afpro.idea.aophelper.LancetListDialogAction"
+            description="show all lancet class " id="LancetListDialogAction" text="Lancet List">
+            <add-to-group anchor="first" group-id="ToolsMenu" />
+            <keyboard-shortcut first-keystroke="meta J" keymap="$default"
+                second-keystroke="meta J" />
         </action>
+
+
+        <action class="net.afpro.idea.aophelper.LancetCodeGenerateAction"
+            description="Generate Lancet Code " id="LancetCodeGenerateAction" text="Lancet Generate">
+            <add-to-group group-id="JavaGenerateGroup1" anchor="last"/>
+            <keyboard-shortcut first-keystroke="meta L" keymap="$default"
+                second-keystroke="meta L" />
+        </action>
+
+
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -39,16 +51,16 @@
 
         <!-- lancet -->
         <codeInsight.lineMarkerProvider
-                language="JAVA"
-                implementationClass="net.afpro.idea.aophelper.lancet.LancetLineMarkerProvider"/>
+            implementationClass="net.afpro.idea.aophelper.lancet.LancetLineMarkerProvider"
+            language="JAVA" />
         <codeInsight.lineMarkerProvider
-                language="kotlin"
-                implementationClass="net.afpro.idea.aophelper.lancet.LancetLineMarkerProvider"/>
+            implementationClass="net.afpro.idea.aophelper.lancet.LancetLineMarkerProvider"
+            language="kotlin" />
         <psi.referenceContributor
-                language="JAVA"
-                implementation="net.afpro.idea.aophelper.lancet.LancetJavaPsiReferenceContributor"/>
+            implementation="net.afpro.idea.aophelper.lancet.LancetJavaPsiReferenceContributor"
+            language="JAVA" />
         <psi.referenceContributor
-                language="kotlin"
-                implementation="net.afpro.idea.aophelper.lancet.LancetKotlinPsiReferenceContributor"/>
+            implementation="net.afpro.idea.aophelper.lancet.LancetKotlinPsiReferenceContributor"
+            language="kotlin" />
     </extensions>
 </idea-plugin>

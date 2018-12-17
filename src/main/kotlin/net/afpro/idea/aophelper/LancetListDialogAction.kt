@@ -1,79 +1,75 @@
 package net.afpro.idea.aophelper
 
 import com.intellij.ide.util.EditSourceUtil
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
-import com.intellij.notification.Notifications
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataKeys
 import com.intellij.pom.Navigatable
 import com.intellij.psi.PsiElement
-import net.afpro.idea.aophelper.lancet.Cache
+import net.afpro.idea.aophelper.lancet.LancetElement
 import net.afpro.idea.aophelper.lancet.LancetLineMarkerProvider
-import org.jetbrains.kotlin.idea.search.allScope
-import org.jetbrains.kotlin.j2k.getContainingClass
-import java.awt.Dimension
-import javax.swing.JFrame
-import javax.swing.JList
-import javax.swing.JPanel
-import javax.swing.WindowConstants
+import net.afpro.idea.aophelper.lancet.LancetTabModel
+import java.awt.BorderLayout
+import javax.swing.*
+import javax.swing.table.DefaultTableCellRenderer
 
 
 class LancetListDialogAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent?) {
-        val jf = JFrame("All Lancet Class List")
-        jf.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
-        jf.setLocationRelativeTo(null)
-        jf.setSize(500, 500)
 
 
-        val jList = JList<String>()
-        jList.preferredSize = Dimension(200, 100)
-//        jList.foreground = Color.GREEN
+        val frame = JFrame("Lancet插桩列表")
+
+        val scrollPane = JScrollPane()
+        val columnNames = listOf("Lancet Class", "Target Class", "Target Method")
 
 
-        val proj = e?.dataContext?.getData(DataKeys.PROJECT) ?: return
-        val scope = proj.allScope()
-
-        val lancetTypes = LancetLineMarkerProvider.LancetTypes(proj)
-        val names = lancetTypes.possibleInjectPoints.map {
-            "Class Name:" + it.key.getContainingClass()?.qualifiedName + "    Method Name:" + it.key.text
-        }.toList()
-
-        val methodList = lancetTypes.possibleInjectPoints.map {
-            it.key
+        val project = e?.dataContext?.getData(DataKeys.PROJECT) ?: return
+        val lancetTypes = LancetLineMarkerProvider.LancetTypes(project)
+        val rowData = lancetTypes.possibleInjectPoints.map {
+            LancetElement(it.key.containingClass?.name, it.value.targetClassInfo?.value, it.key.name)
         }.toList()
 
 
-        /* val names = Cache.allMatchPsiElement.map {
-             "Class Name:" + it.getContainingClass()?.qualifiedName + "    Method Name:" + it.text
-         }.toList()*/
+        val tableModel = LancetTabModel(columnNames, rowData)
+        val table = JTable(tableModel)
+
+        val tableCellRenderer = DefaultTableCellRenderer()
+
+        tableCellRenderer.horizontalAlignment = JLabel.CENTER
+        table.setDefaultRenderer(Any::class.java, tableCellRenderer)
+
+        scrollPane.setViewportView(table)
+        frame.contentPane.add(scrollPane, BorderLayout.CENTER)
+
+        frame.defaultCloseOperation = WindowConstants.DISPOSE_ON_CLOSE
+        frame.setBounds(300, 200, 800, 400)
 
 
-        jList.setListData(toArray<String>(names))
 
-        jList.addListSelectionListener {
-
-            val indices = jList.selectedIndices
-            val jListModel = jList.model
+        table.setShowGrid(false)
 
 
-            Notifications.Bus.notify(Notification("AopHelper", "Test", "index:" + indices.size + "0" + Cache.allMatchPsiElement.size, NotificationType.INFORMATION))
+
+        table.rowHeight = 40
 
 
-            indices.forEach {
-                gotoTargetElement(methodList[it])
+        val selectionModel = table.selectionModel
+        selectionModel.selectionMode = ListSelectionModel.SINGLE_SELECTION
+        selectionModel.addListSelectionListener {
+            val selectedRow = table.selectedRow
+            val psi = lancetTypes.possibleInjectPoints.map {
+                it.key
+            }.toList()[selectedRow]
 
-            }
-
+            gotoTargetElement(psi)
         }
-        val panel = JPanel()
 
-        panel.add(jList)
+        frame.pack()
+        frame.setLocationRelativeTo(null)
+        frame.isVisible = true
 
-        jf.contentPane = jList
-        jf.isVisible = true
+
     }
 
 
@@ -90,5 +86,6 @@ class LancetListDialogAction : AnAction() {
     inline fun <reified T> toArray(list: List<*>): Array<T> {
         return (list as List<T>).toTypedArray()
     }
+
 
 }

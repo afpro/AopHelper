@@ -27,10 +27,13 @@ class LancetLineMarkerProvider : LineMarkerProvider {
 
     override fun collectSlowLineMarkers(elements: MutableList<PsiElement>, result: MutableCollection<LineMarkerInfo<PsiElement>>) {
         val typesMap = HashMap<Project, LancetTypes>()
+
+
         elements.asSequence()
                 .flatMap { el ->
                     val proj by lazy(LazyThreadSafetyMode.NONE) {
                         PsiUtil.getProjectInReadAction(el)
+
                     }
                     val types by lazy(LazyThreadSafetyMode.NONE) {
                         typesMap.getOrPut(proj) { LancetTypes(proj) }
@@ -118,6 +121,8 @@ class LancetLineMarkerProvider : LineMarkerProvider {
             if (cImplInterface != null) {
                 yieldAll(AnnotatedElementsSearch.searchPsiMethods(cImplInterface, scope))
             }
+
+
         }
 
         private fun methodToInjectPoint(method: PsiMethod): Pair<PsiMethod, LancetInfo>? {
